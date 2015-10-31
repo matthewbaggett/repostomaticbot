@@ -40,7 +40,7 @@ $middlewares = [
     new Repostomatic\AdminCommands($telegram)
 ];
 
-echo "Repost-o-matic is Listening...\n";
+echo "Repost-o-matic is Listening... Key is \"{$telegramApiKey}\"\n";
 
 while (true) {
     //\Kint::dump(
