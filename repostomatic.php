@@ -8,7 +8,7 @@ define('TELEGRAM_KEY_FILE', APP_ROOT . "/telegram.key");
 if(!file_exists(TELEGRAM_KEY_FILE)){
     die("No telegram.key file!\n");
 }
-$telegramApiKey = file_get_contents(TELEGRAM_KEY_FILE);
+$telegramApiKey = trim(file_get_contents(TELEGRAM_KEY_FILE));
 echo "Telegram API Key: {$telegramApiKey}\n";
 $telegram = new Telegram\Bot\Api($telegramApiKey);
 
@@ -32,7 +32,6 @@ if(isset($_SERVER['DB_PORT'])){
         'db_database' => 'repostomatic',
     );
 }
-\Kint::dump($dbConnection);
 $database = new \Thru\ActiveRecord\DatabaseLayer($dbConnection);
 
 $middlewares = [
