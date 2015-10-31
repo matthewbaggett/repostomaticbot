@@ -22,9 +22,9 @@ class AdminCommands
 
     public function process(Message $message)
     {
-        echo "Checking for admin commands...";
+        #echo "Checking for admin commands...";
         if(self::adminCheck($message->getFrom())){
-            echo " Is Admin ...\n";
+            #echo " Is Admin ...\n";
             $chat = $message->getChat();
             if(strtolower($message->message) == '/enablerepostdetection'){
                 $chat->report_reposts = 'Yes';
@@ -44,7 +44,7 @@ class AdminCommands
                 return;
             }
         }
-        echo " Is dirty pleb. No commands for you\n";
+        #echo " Is dirty pleb. No commands for you\n";
         return;
     }
 

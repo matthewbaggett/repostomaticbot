@@ -11,8 +11,6 @@ if(!file_exists(TELEGRAM_KEY_FILE)){
 $telegramApiKey = file_get_contents(TELEGRAM_KEY_FILE);
 $telegram = new Telegram\Bot\Api($telegramApiKey);
 echo "Repostomatic is Listening...\n";
-#sleep(2);
-#sleep(5);
 
 if(isset($_SERVER['DB_PORT'])){
     $hostUrl = parse_url($_SERVER['DB_PORT']);
