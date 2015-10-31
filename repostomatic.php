@@ -9,8 +9,8 @@ if(!file_exists(TELEGRAM_KEY_FILE)){
     die("No telegram.key file!\n");
 }
 $telegramApiKey = file_get_contents(TELEGRAM_KEY_FILE);
+echo "Telegram API Key: {$telegramApiKey}\n";
 $telegram = new Telegram\Bot\Api($telegramApiKey);
-echo "Repostomatic is Listening...\n";
 
 if(isset($_SERVER['DB_PORT'])){
     $hostUrl = parse_url($_SERVER['DB_PORT']);
@@ -39,6 +39,8 @@ $middlewares = [
     new Repostomatic\RepostChecker($telegram),
     new Repostomatic\AdminCommands($telegram)
 ];
+
+echo "Repost-o-matic is Listening...\n";
 
 while (true) {
     //\Kint::dump(
