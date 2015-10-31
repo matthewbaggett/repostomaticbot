@@ -40,20 +40,23 @@ class RepostChecker
                     $messagesWithThisImage = Message::search()
                         ->where('photo_id', $newestDuplicate->photo_id)
                         ->where('telegram_message_id', $message->telegram_message_id, '!=')
+                        ->where('chat_id', $message->chat_id)
                         ->exec();
-                    $this->telegram->sendMessage(
-                        $message->getChat()->telegram_id,
-                        sprintf(
-                            "This image has been seen %s before! First time I saw it was posted by %s, about %s",
-                            ((count($messagesWithThisImage)>1) ? count($messagesWithThisImage) . " times": "1 time"),
-                            $oldestDuplicate->getMessage()->getFrom()->getName(),
-                            DateTime::difference(new \DateTime(), new \DateTime($newestDuplicate->getMessage()->date))
-                        ),
-                        false,
-                        $message->telegram_message_id
-                    );
-                    echo "  FOUND!\n";
-                    return;
+                    if(count($messagesWithThisImage) > 0) {
+                        $this->telegram->sendMessage(
+                            $message->getChat()->telegram_id,
+                            sprintf(
+                                "This image has been seen %s before! First time I saw it was posted by %s, about %s",
+                                ((count($messagesWithThisImage) > 1) ? count($messagesWithThisImage) . " times" : "1 time"),
+                                $oldestDuplicate->getMessage()->getFrom()->getName(),
+                                DateTime::difference(new \DateTime(), new \DateTime($newestDuplicate->getMessage()->date))
+                            ),
+                            false,
+                            $message->telegram_message_id
+                        );
+                        echo "  FOUND!\n";
+                        return;
+                    }
                 }
             }
             echo "  None.\n";
