@@ -30,13 +30,17 @@ class RepostChecker
                 $duplicates = $photo->findDuplicates();
                 echo "  There are " . count($duplicates) . " duplicates of {$photo->md5_sum}.\n";
                 \Kint::dump($duplicates);
-                if(count($duplicates) > 0) {
+                $duplicatesCount = count($duplicates) - 1;
+                if($duplicatesCount > 0) {
                     /** @var Photo $newestDuplicate */
                     $newestDuplicate = end($duplicates);
                     /** @var Photo $oldestDuplicate */
                     $oldestDuplicate = reset($duplicates);
                     \Kint::dump("Duplicate Finder!", $photo, $duplicates);
-                    $messagesWithThisImage = Message::search()->where('photo_id', $newestDuplicate->photo_id)->exec();
+                    $messagesWithThisImage = Message::search()
+                        ->where('photo_id', $newestDuplicate->photo_id)
+                        ->where('telegram_message_id', $message->telegram_message_id, '!=')
+                        ->exec();
                     $this->telegram->sendMessage(
                         $message->getChat()->telegram_id,
                         sprintf(
