@@ -4,6 +4,9 @@ use Repostomatic\Models;
 
 require_once("vendor/autoload.php");
 define('APP_ROOT', __DIR__);
+if(!file_exists('telegram.key')){
+    die("No telegram.key file!\n");
+}
 $telegramApiKey = file_get_contents("telegram.key");
 $telegram = new Telegram\Bot\Api($telegramApiKey);
 
