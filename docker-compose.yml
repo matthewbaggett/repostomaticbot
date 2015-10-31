@@ -1,0 +1,27 @@
+maria:
+  image: mariadb
+  volumes:
+    - ~/docker/repostomatic/mysql:/var/lib/mysql
+  environment:
+    - MYSQL_ROOT_PASSWORD=DoNotUse
+    - MYSQL_USER=repostomatic
+    - MYSQL_PASSWORD=passwordGoesHere
+    - MYSQL_DATABASE=repostomatic
+
+phpmyadmin:
+  environment:
+   - VIRTUAL_HOST=mysql.repostomatic.thru.io
+  expose:
+   - '80'
+  ports:
+   - '4309:80'
+  image: yoshz/phpmyadmin:latest
+  links:
+   - maria:db
+
+repostomatic:
+  build: .
+  links:
+    - maria:db
+  volumes:
+    - .:/app
