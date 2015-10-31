@@ -4,30 +4,42 @@ use Repostomatic\Models;
 
 require_once("vendor/autoload.php");
 define('APP_ROOT', __DIR__);
-if(!file_exists('telegram.key')){
+define('TELEGRAM_KEY_FILE', APP_ROOT . "/telegram.key");
+if(!file_exists(TELEGRAM_KEY_FILE)){
     die("No telegram.key file!\n");
 }
-$telegramApiKey = file_get_contents("telegram.key");
+$telegramApiKey = file_get_contents(TELEGRAM_KEY_FILE);
 $telegram = new Telegram\Bot\Api($telegramApiKey);
+echo "Repostomatic is Listening...\n";
+#sleep(2);
+#sleep(5);
 
-if (false) {
-    $database = new \Thru\ActiveRecord\DatabaseLayer(array(
-        'db_type' => 'Sqlite',
-        'db_file' => 'repostomatic.sqlite',
-    ));
-} else {
-    $database = new \Thru\ActiveRecord\DatabaseLayer(array(
+if(isset($_SERVER['DB_PORT'])){
+    $hostUrl = parse_url($_SERVER['DB_PORT']);
+    $dbConnection = array(
+        'db_type' => 'Mysql',
+        'db_hostname' => $hostUrl['host'],
+        'db_port' => $hostUrl['port'],
+        'db_username' => $_SERVER['DB_ENV_MYSQL_USER'],
+        'db_password' => $_SERVER['DB_ENV_MYSQL_PASSWORD'],
+        'db_database' => $_SERVER['DB_ENV_MYSQL_DATABASE'],
+    );
+}else {
+    $dbConnection = array(
         'db_type' => 'Mysql',
         'db_hostname' => 'localhost',
         'db_port' => '3306',
         'db_username' => 'repostomatic',
         'db_password' => 'repostomatic',
         'db_database' => 'repostomatic',
-    ));
+    );
 }
+\Kint::dump($dbConnection);
+$database = new \Thru\ActiveRecord\DatabaseLayer($dbConnection);
 
 $middlewares = [
-    new Repostomatic\RepostChecker($telegram)
+    new Repostomatic\RepostChecker($telegram),
+    new Repostomatic\AdminCommands($telegram)
 ];
 
 while (true) {
