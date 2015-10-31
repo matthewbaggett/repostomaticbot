@@ -24,12 +24,12 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN mkdir -p /app
 ADD . /app
 ADD telegram.key /app/telegram.key
+RUN cat /app/telegram.key
 
 # Run Composer
 RUN cd /app && composer install
 
 WORKDIR /app
-
 
 # Add startup scripts
 RUN mkdir /etc/service/repost-o-matic
