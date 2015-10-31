@@ -14,6 +14,7 @@ RUN apt-get update && \
         php5-curl \
         php-pear \
         php5-dev \
+        php5-xdebug \
         php-apc && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

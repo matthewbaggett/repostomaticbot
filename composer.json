@@ -39,7 +39,7 @@
         "raveren/kint": "dev-master",
         "predis/predis": "1.0.*@dev",
         "thru.io/active_record": "dev-master",
-        "irazasyed/telegram-bot-sdk": "^1.0",
+        "irazasyed/telegram-bot-sdk": "dev-master",
         "coduo/php-humanizer": "^1.1@dev"
     },
     "require-dev": {

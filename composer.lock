@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "4496cdca39377e6ea05f44ac26520682",
-    "content-hash": "63a39c7a62b8095f0636f5c5010ae53e",
+    "hash": "f4dc595ff9a1f1353d71a2bffd5ca042",
+    "content-hash": "aed79ef56fd9bc842cd28e05f8c20d8d",
     "packages": [
         {
             "name": "coduo/php-humanizer",
@@ -455,16 +455,16 @@
         },
         {
             "name": "irazasyed/telegram-bot-sdk",
-            "version": "v1.0.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/irazasyed/telegram-bot-sdk.git",
-                "reference": "c0989e6e3ac09a86fae668648a52ee2bfd229824"
+                "reference": "d6821270cffb0f582dd7dafa7202e9892c8ae84e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/irazasyed/telegram-bot-sdk/zipball/c0989e6e3ac09a86fae668648a52ee2bfd229824",
-                "reference": "c0989e6e3ac09a86fae668648a52ee2bfd229824",
+                "url": "https://api.github.com/repos/irazasyed/telegram-bot-sdk/zipball/d6821270cffb0f582dd7dafa7202e9892c8ae84e",
+                "reference": "d6821270cffb0f582dd7dafa7202e9892c8ae84e",
                 "shasum": ""
             },
             "require": {
@@ -508,7 +508,7 @@
                 "telegram php",
                 "telegram sdk"
             ],
-            "time": "2015-09-07 23:01:36"
+            "time": "2015-10-10 15:47:05"
         },
         {
             "name": "predis/predis",
@@ -2047,6 +2047,7 @@
         "raveren/kint": 20,
         "predis/predis": 20,
         "thru.io/active_record": 20,
+        "irazasyed/telegram-bot-sdk": 20,
         "coduo/php-humanizer": 20,
         "thru.io/slim-route-test": 20
     },

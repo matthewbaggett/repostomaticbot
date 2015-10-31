@@ -86,6 +86,8 @@ class Message extends ActiveRecord
     public static function CreateOrUpdateFromTelegramUpdate(\Telegram\Bot\Objects\Update $update)
     {
 
+        global $telegram;
+
         $message = Message::search()->where('telegram_message_id', $update->getMessage()->getMessageId())->execOne();
 
         $user = Person::CreateOrFetch(
@@ -129,6 +131,8 @@ class Message extends ActiveRecord
             /** @var $photo Photo */
             $photos = Photo::CreateOrUpdateFromTelegramUpdate($update->getMessage()->getPhoto());
             foreach ($photos as $pixelCount => list($photo, $telegramFile)) {
+
+                $url = "https://api.telegram.org/file/bot{$telegram->getAccessToken()}/{$telegramFile->get('file_path')}";
                 $downloadedData = file_get_contents($telegramFile->getUrl());
                 $outputPath = APP_ROOT . "/download/{$chat->chat_id}/";
                 if (!file_exists($outputPath)) {
