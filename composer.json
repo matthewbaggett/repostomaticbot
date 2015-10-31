@@ -1,0 +1,57 @@
+{
+    "name": "geusebio/repost-o-matic",
+    "authors": [
+        {
+            "name": "Matthew Baggett",
+            "email": "matthew@baggett.me"
+        }
+    ],
+    "repositories": [
+        {
+            "url": "https://github.com/Thruio/ActiveRecord.git",
+            "type": "git"
+        },{
+            "url": "https://github.com/Thruio/SlimRouteTest.git",
+            "type": "git"
+        },{
+            "url": "https://github.com/Thruio/JsonPrettyPrinter.git",
+            "type": "git"
+        },{
+            "url": "https://github.com/eventsd/libeventsd.git",
+            "type": "git"
+        },{
+            "url": "https://github.com/eventsd/eventsd.git",
+            "type": "git"
+        },{
+            "url": "https://github.com/matthewbaggett/php-color",
+            "type": "git"
+        },{
+            "url": "https://github.com/Thruio/Phue.git",
+            "type": "git"
+        },{
+            "url": "https://github.com/matthewbaggett/LimitlessLED.git",
+            "type": "git"
+        }
+    ],
+    "prefer-stable": true,
+    "minimum-stability": "dev",
+    "require": {
+        "raveren/kint": "dev-master",
+        "predis/predis": "1.0.*@dev",
+        "thru.io/active_record": "dev-master",
+        "irazasyed/telegram-bot-sdk": "^1.0",
+        "coduo/php-humanizer": "^1.1@dev"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.4.*",
+        "phpunit/phpunit-selenium": ">=1.2",
+        "thru.io/slim-route-test": "dev-master",
+        "squizlabs/php_codesniffer": "^2.3"
+    },
+    "autoload": {
+        "psr-4": {"Repostomatic\\": "src/"}
+    },
+    "autoload-dev": {
+        "psr-4": { "Repostomatic\\Tests\\": "tests/" }
+    }
+}
