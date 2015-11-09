@@ -4,6 +4,7 @@ namespace Repostomatic;
 use Coduo\PHPHumanizer\Number;
 use Coduo\PHPHumanizer\DateTime;
 
+use League\Flysystem\AdapterInterface;
 use Repostomatic\Models\Message;
 use Repostomatic\Models\Person;
 use Telegram\Bot\Api;
@@ -15,9 +16,10 @@ class AdminCommands
     /** @var Api */
     private $telegram;
 
-    public function __construct(Api $telegram)
+    public function __construct(Api $telegram, \League\Flysystem\Filesystem $storageAdaptor)
     {
         $this->telegram = $telegram;
+        $this->storageAdaptor = $storageAdaptor;
     }
 
     public function process(Message $message)

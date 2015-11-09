@@ -1,5 +1,6 @@
 .idea
 vendor
 telegram.key*
+dreamhost.key*
 repostomatic.sqlite
 download/*

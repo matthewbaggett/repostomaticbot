@@ -13,10 +13,12 @@ class RepostChecker
 
     /** @var Api */
     private $telegram;
+    private $storageAdaptor;
 
-    public function __construct(Api $telegram)
+    public function __construct(Api $telegram, \League\Flysystem\Filesystem $storageAdaptor)
     {
         $this->telegram = $telegram;
+        $this->storageAdaptor = $storageAdaptor;
     }
 
     public function process(Message $message)
@@ -29,19 +31,20 @@ class RepostChecker
                 $photo = $message->getPhoto();
                 $duplicates = $photo->findDuplicates();
                 echo "  There are " . count($duplicates) . " duplicates of {$photo->md5_sum}.\n";
-                \Kint::dump($duplicates);
+                #\Kint::dump($duplicates);
                 $duplicatesCount = count($duplicates) - 1;
                 if($duplicatesCount > 0) {
                     /** @var Photo $newestDuplicate */
                     $newestDuplicate = end($duplicates);
                     /** @var Photo $oldestDuplicate */
                     $oldestDuplicate = reset($duplicates);
-                    \Kint::dump("Duplicate Finder!", $photo, $duplicates);
+                   # \Kint::dump("Duplicate Finder!", $photo, $duplicates);
                     $messagesWithThisImage = Message::search()
                         ->where('photo_id', $newestDuplicate->photo_id)
                         ->where('telegram_message_id', $message->telegram_message_id, '!=')
                         ->where('chat_id', $message->chat_id)
                         ->exec();
+                    echo "  Found " . count($messagesWithThisImage) . " instances of messages with this photo_id ({$newestDuplicate->photo_id})";
                     if(count($messagesWithThisImage) > 0) {
                         $this->telegram->sendMessage(
                             $message->getChat()->telegram_id,

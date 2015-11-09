@@ -1,6 +1,7 @@
 <?php
 namespace Repostomatic\Models;
 
+use League\Flysystem\AdapterInterface;
 use \Thru\ActiveRecord\ActiveRecord;
 
 /**
@@ -83,7 +84,7 @@ class Message extends ActiveRecord
      * @param \Telegram\Bot\Objects\Update $update
      * @return Message
      */
-    public static function CreateOrUpdateFromTelegramUpdate(\Telegram\Bot\Objects\Update $update)
+    public static function CreateOrUpdateFromTelegramUpdate(\Telegram\Bot\Objects\Update $update, \League\Flysystem\Filesystem $storageAdaptor)
     {
 
         global $telegram;
@@ -114,31 +115,26 @@ class Message extends ActiveRecord
             echo "Found a document!\n";
             /** @var $document Document */
             list($document, $telegramFile) = Document::CreateOrUpdateFromTelegramUpdate($update->getMessage()->getDocument());
-            $downloadedData = file_get_contents($telegramFile->getUrl());
+            $url = "https://api.telegram.org/file/bot{$telegram->getAccessToken()}/{$telegramFile->get('file_path')}";
+            $downloadedData = file_get_contents($url);
             $outputPath = APP_ROOT . "/download/{$chat->chat_id}/";
-            if (!file_exists($outputPath)) {
-                mkdir($outputPath, 0777, true);
-            }
-            $outputFile = $outputPath . str_replace("document/", "", $document->file_name);
-            echo "Writing to {$outputFile}\n";
-            file_put_contents($outputFile, $downloadedData);
+            $filePath = "docs/" . $message->getChat()->chat_id . "/" . str_replace("document/", "", $document->file_name);
+            echo "Writing to {$filePath}\n";
+            $storageAdaptor->put($filePath, $downloadedData);
+            $storageAdaptor->setVisibility($filePath, 'public');
             $message->document_id = $document->document_id;
         }
-
 
         if ($update->getMessage()->getPhoto()) {
             echo "Found a photo!\n";
             /** @var $photo Photo */
             $photos = Photo::CreateOrUpdateFromTelegramUpdate($update->getMessage()->getPhoto());
+            krsort($photos);
             foreach ($photos as $pixelCount => list($photo, $telegramFile)) {
 
                 $url = "https://api.telegram.org/file/bot{$telegram->getAccessToken()}/{$telegramFile->get('file_path')}";
-                $downloadedData = file_get_contents($telegramFile->getUrl());
-                $outputPath = APP_ROOT . "/download/{$chat->chat_id}/";
-                if (!file_exists($outputPath)) {
-                    mkdir($outputPath, 0777, true);
-                }
-                $outputFile = $outputPath . $photo->file_id . "_" . $pixelCount;
+                $downloadedData = file_get_contents($url);
+                $outputFile = "photos/" . $message->getChat()->chat_id . "/" . $photo->file_id . "_" . $pixelCount;
 
                 if (self::is_jpeg($downloadedData)) {
                     $outputFile .= ".jpg";
@@ -147,10 +143,11 @@ class Message extends ActiveRecord
                     $outputFile .= ".png";
                 }
 
-                #echo "Writing to {$outputFile}\n";
-                file_put_contents($outputFile, $downloadedData);
+                echo "Writing to {$outputFile}\n";
+                $storageAdaptor->put($outputFile, $downloadedData);
+                $storageAdaptor->setVisibility($outputFile, 'public');
                 $photo->storage_location = $outputFile;
-                $photo->md5_sum = md5_file($outputFile);
+                $photo->md5_sum = md5($downloadedData);
                 $photo->save();
             }
 

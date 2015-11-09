@@ -8,6 +8,11 @@ define('TELEGRAM_KEY_FILE', APP_ROOT . "/telegram.key");
 if(!file_exists(TELEGRAM_KEY_FILE)){
     die("No telegram.key file!\n");
 }
+define('DREAMHOST_KEY_FILE', APP_ROOT . "/dreamhost.key");
+if(!file_exists(DREAMHOST_KEY_FILE)){
+    die("No dreamhost.key file!\n");
+}
+$dreamhostKey = file_get_contents(DREAMHOST_KEY_FILE);
 $telegramApiKey = trim(file_get_contents(TELEGRAM_KEY_FILE));
 echo "Telegram API Key: {$telegramApiKey}\n";
 $telegram = new Telegram\Bot\Api($telegramApiKey);
@@ -34,9 +39,25 @@ if(isset($_SERVER['DB_PORT'])){
 }
 $database = new \Thru\ActiveRecord\DatabaseLayer($dbConnection);
 
+echo "Waiting for database warmup... ";
+sleep(5);
+echo "DONE\n";
+
+$dreamhostKey = explode("\n", $dreamhostKey);
+$storageClient = \Aws\S3\S3Client::factory(array(
+    'base_url' => 'https://objects.dreamhost.com',
+    'key'      => $dreamhostKey[0],
+    'secret'   => $dreamhostKey[1],
+));
+
+$storageAdaptor = new \League\Flysystem\AwsS3v2\AwsS3Adapter($storageClient, 'reposts');
+
+$filesystem = new \League\Flysystem\Filesystem($storageAdaptor);
+
+
 $middlewares = [
-    new Repostomatic\RepostChecker($telegram),
-    new Repostomatic\AdminCommands($telegram)
+    new Repostomatic\RepostChecker($telegram, $filesystem),
+    new Repostomatic\AdminCommands($telegram, $filesystem)
 ];
 
 echo "Repost-o-matic is Listening... Key is \"{$telegramApiKey}\"\n";
@@ -53,7 +74,7 @@ while (true) {
         $startingOffset = null;
     }
     foreach ($telegram->getUpdates($startingOffset) as $update) {
-        $message = Models\Message::CreateOrUpdateFromTelegramUpdate($update);
+        $message = Models\Message::CreateOrUpdateFromTelegramUpdate($update, $filesystem);
         echo "New Message from {$message->getFrom()->getName()}: {$message->message}\n";
         foreach ($middlewares as $middleware) {
             $middleware->process($message);
