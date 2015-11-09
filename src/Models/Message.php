@@ -81,6 +81,16 @@ class Message extends ActiveRecord
     }
 
     /**
+     * Get date formatted.
+     * @param $format
+     * @return bool|string
+     */
+    public function getDate($format = "H:i:s")
+    {
+        return date($format, strtotime($this->date));
+    }
+
+    /**
      * @param \Telegram\Bot\Objects\Update $update
      * @return Message
      */

@@ -75,7 +75,9 @@ while (true) {
     }
     foreach ($telegram->getUpdates($startingOffset) as $update) {
         $message = Models\Message::CreateOrUpdateFromTelegramUpdate($update, $filesystem);
-        echo "New Message from {$message->getFrom()->getName()}: {$message->message}\n";
+        echo "New Message in {$message->getChat()->title} at {$message->getDate("H:i:s")} " .
+            "from {$message->getFrom()->getName()}: " .
+            "{$message->message}\n";
         foreach ($middlewares as $middleware) {
             $middleware->process($message);
         }
